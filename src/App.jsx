@@ -168,7 +168,7 @@ export default function App() {
                 style={{
                   fontFamily: FONT,
                   fontWeight: 800,
-                  fontSize: 'clamp(11px, 2.75vw, 40px)',
+                  fontSize: 'clamp(13px, 3.16vw, 46px)',
                   letterSpacing: '8px',
                   fontStyle: 'normal',
                   textTransform: 'uppercase',
@@ -183,7 +183,7 @@ export default function App() {
           <p style={{
             fontFamily: FONT,
             fontWeight: 800,
-            fontSize: '11px',
+            fontSize: '26px',
             letterSpacing: '0.1em',
             color: '#ffffff',
             whiteSpace: 'nowrap',
