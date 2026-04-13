@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import BorderProgress from './BorderProgress'
 
-const FONT = "'Oswald', sans-serif"
+const FONT = "'Red Rose', sans-serif"
+
 
 function getDefaultTarget() {
   const d = new Date(Date.now() + 38 * 24 * 60 * 60 * 1000)
@@ -24,15 +26,20 @@ function getTimeLeft(targetDate) {
 
 function Unit({ value, label, red }) {
   return (
-    <div className="flex items-end" style={{ gap: '0.3em' }}>
+    <div className="flex flex-col items-center" style={{ gap: '8px' }}>
       <span
         style={{
           fontFamily: FONT,
-          fontWeight: 700,
-          fontSize: 'clamp(72px, 13vw, 220px)',
+          fontWeight: 400,
+          fontSize: 'clamp(50px, 9.1vw, 154px)',
           lineHeight: 1,
           color: red ? '#dc2020' : '#ffffff',
           letterSpacing: '-0.02em',
+          fontVariantNumeric: 'tabular-nums',
+          fontFeatureSettings: '"tnum"',
+          display: 'inline-block',
+          width: '2.2ch',
+          textAlign: 'center',
         }}
       >
         {value}
@@ -40,11 +47,10 @@ function Unit({ value, label, red }) {
       <span
         style={{
           fontFamily: FONT,
-          fontWeight: 300,
-          fontSize: 'clamp(10px, 1.1vw, 18px)',
+          fontWeight: 400,
+          fontSize: '24px',
           letterSpacing: '0.2em',
-          color: 'rgba(255,255,255,0.65)',
-          marginBottom: '0.35em',
+          color: red ? '#dc2020' : '#ffffff',
         }}
       >
         {label}
@@ -78,6 +84,8 @@ export default function App() {
   const { days, hours, minutes, seconds } = timeLeft
 
   return (
+    <>
+    <BorderProgress />
     <div
       className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden"
       style={{
@@ -87,53 +95,55 @@ export default function App() {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.45)' }} />
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center" style={{ gap: 'clamp(20px, 4vh, 48px)' }}>
+      <div className="relative z-10 flex flex-col items-center w-full" style={{ gap: 'clamp(8px, 1.5vh, 20px)', padding: '0 clamp(16px, 5vw, 80px)' }}>
 
-        {/* ONE TEAM */}
-        <p
-          style={{
-            fontFamily: FONT,
-            fontWeight: 300,
-            fontSize: 'clamp(11px, 1.2vw, 16px)',
-            letterSpacing: '0.55em',
-            color: 'rgba(255,255,255,0.75)',
-            fontStyle: 'italic',
-            textTransform: 'uppercase',
-          }}
-        >
-          ONE TEAM
-        </p>
+        {/* ONE TEAM + ZERO SHOT 並排 */}
+        <div className="flex items-center justify-center" style={{ gap: '3em' }}>
+          {['ONE TEAM', 'ZERO-SHOT'].map(text => (
+            <p
+              key={text}
+              style={{
+                fontFamily: FONT,
+                fontWeight: 800,
+                fontSize: 'clamp(16px, 2.5vw, 36px)',
+                letterSpacing: '8px',
+                fontStyle: 'normal',
+                textTransform: 'uppercase',
+                color: '#ffffff',
+              }}
+            >
+              {text}
+            </p>
+          ))}
+        </div>
 
         {/* Countdown numbers */}
         <div
-          className="flex items-end"
-          style={{ gap: 'clamp(24px, 5vw, 80px)' }}
+          className="flex items-end flex-wrap justify-center"
+          style={{ gap: 'clamp(40px, 8vw, 160px)', width: '100%' }}
         >
           <Unit value={pad(days)} label="DAY" red />
           <Unit value={pad(hours)} label="HRS" />
           <Unit value={pad(minutes)} label="MIN" />
-          <Unit value={pad(seconds)} label="SEC" />
         </div>
-
-        {/* ZERO SHOT */}
-        <p
-          style={{
-            fontFamily: FONT,
-            fontWeight: 300,
-            fontSize: 'clamp(11px, 1.2vw, 16px)',
-            letterSpacing: '0.55em',
-            color: 'rgba(255,255,255,0.75)',
-            fontStyle: 'italic',
-            textTransform: 'uppercase',
-          }}
-        >
-          ZERO SHOT
-        </p>
       </div>
+
+
+      {/* Logo */}
+      <img
+        src="/logo_primary_horizontal_EN.svg"
+        alt="Logo"
+        style={{
+          position: 'absolute',
+          bottom: '2rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          height: '40px',
+          width: 'auto',
+        }}
+      />
 
       {/* Set Countdown button */}
       <button
@@ -142,29 +152,32 @@ export default function App() {
           position: 'absolute',
           bottom: '2rem',
           right: '2rem',
-          fontFamily: FONT,
-          fontWeight: 300,
-          fontSize: '11px',
-          letterSpacing: '0.25em',
-          textTransform: 'uppercase',
-          color: 'rgba(255,255,255,0.4)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          padding: '8px 18px',
-          background: 'transparent',
+          width: '12px',
+          height: '12px',
+          borderRadius: '50%',
+          background: 'rgba(0,0,0,0.25)',
+          border: 'none',
           cursor: 'pointer',
-          transition: 'all 0.2s',
+          transition: 'background 0.2s, transform 0.2s',
+          padding: 0,
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color = 'rgba(255,255,255,0.85)'
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.55)'; e.currentTarget.style.transform = 'scale(1.6)' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.25)'; e.currentTarget.style.transform = 'scale(1)' }}
+      />
+
+      {/* HOKI.gif */}
+      <img
+        src="/HOKI.gif"
+        alt="HOKI"
+        style={{
+          position: 'absolute',
+          bottom: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '120px',
+          height: 'auto',
         }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color = 'rgba(255,255,255,0.4)'
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
-        }}
-      >
-        Set Countdown
-      </button>
+      />
 
       {/* Modal */}
       {showModal && (
@@ -253,5 +266,6 @@ export default function App() {
         </div>
       )}
     </div>
+    </>
   )
 }
