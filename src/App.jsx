@@ -1,4 +1,65 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+// ── 點按日期選擇器 ──────────────────────────────────────
+function SpinField({ label, value, onUp, onDown }) {
+  const btn = {
+    background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
+    cursor: 'pointer', fontSize: '12px', lineHeight: 1, padding: '4px 8px',
+    fontFamily: 'inherit',
+  }
+  const hoverColor = 'rgba(255,255,255,0.9)'
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+      <button
+        style={btn}
+        onMouseEnter={e => e.currentTarget.style.color = hoverColor}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onClick={onUp}
+      >▲</button>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '22px', fontWeight: 400, color: '#fff', lineHeight: 1 }}>
+          {String(value).padStart(2, '0')}
+        </div>
+        <div style={{ fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
+          {label}
+        </div>
+      </div>
+      <button
+        style={btn}
+        onMouseEnter={e => e.currentTarget.style.color = hoverColor}
+        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onClick={onDown}
+      >▼</button>
+    </div>
+  )
+}
+
+function DatePicker({ value, onChange }) {
+  const d = new Date(value || Date.now())
+  const set = (fn) => {
+    const nd = new Date(d)
+    fn(nd)
+    onChange(nd.getFullYear() + '-' +
+      String(nd.getMonth()+1).padStart(2,'0') + '-' +
+      String(nd.getDate()).padStart(2,'0') + 'T' +
+      String(nd.getHours()).padStart(2,'0') + ':' +
+      String(nd.getMinutes()).padStart(2,'0'))
+  }
+  const sep = <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>:</div>
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', justifyContent: 'center' }}>
+      <SpinField label="YEAR"  value={d.getFullYear()} onUp={() => set(n => n.setFullYear(n.getFullYear()+1))}  onDown={() => set(n => n.setFullYear(n.getFullYear()-1))} />
+      <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>/</div>
+      <SpinField label="MON"   value={d.getMonth()+1}  onUp={() => set(n => n.setMonth(n.getMonth()+1))}        onDown={() => set(n => n.setMonth(n.getMonth()-1))} />
+      <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>/</div>
+      <SpinField label="DAY"   value={d.getDate()}      onUp={() => set(n => n.setDate(n.getDate()+1))}          onDown={() => set(n => n.setDate(n.getDate()-1))} />
+      {sep}
+      <SpinField label="HOUR"  value={d.getHours()}     onUp={() => set(n => n.setHours(n.getHours()+1))}        onDown={() => set(n => n.setHours(n.getHours()-1))} />
+      {sep}
+      <SpinField label="MIN"   value={d.getMinutes()}   onUp={() => set(n => n.setMinutes(n.getMinutes()+1))}    onDown={() => set(n => n.setMinutes(n.getMinutes()-1))} />
+    </div>
+  )
+}
 import BorderProgress from './BorderProgress'
 
 const FONT = "'Red Rose', sans-serif"
@@ -210,21 +271,7 @@ export default function App() {
               Set Countdown Target
             </p>
 
-            <input
-              type="datetime-local"
-              value={inputVal}
-              onChange={e => setInputVal(e.target.value)}
-              style={{
-                background: '#1a1a1a',
-                border: '1px solid rgba(255,255,255,0.15)',
-                color: '#fff',
-                padding: '10px 14px',
-                fontFamily: FONT,
-                fontSize: '14px',
-                outline: 'none',
-                width: '100%',
-              }}
-            />
+            <DatePicker value={inputVal} onChange={setInputVal} />
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
