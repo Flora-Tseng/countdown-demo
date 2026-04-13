@@ -3,31 +3,31 @@ import { useState, useEffect, useCallback } from 'react'
 // ── 點按日期選擇器 ──────────────────────────────────────
 function SpinField({ label, value, onUp, onDown }) {
   const btn = {
-    background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
-    cursor: 'pointer', fontSize: '12px', lineHeight: 1, padding: '4px 8px',
+    background: 'none', border: 'none', color: '#ffffff',
+    cursor: 'pointer', fontSize: '13px', lineHeight: 1, padding: '4px 8px',
     fontFamily: 'inherit',
   }
-  const hoverColor = 'rgba(255,255,255,0.9)'
+  const hoverColor = '#ffffff'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
       <button
         style={btn}
         onMouseEnter={e => e.currentTarget.style.color = hoverColor}
-        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onMouseLeave={e => e.currentTarget.style.color = '#ffffff'}
         onClick={onUp}
       >▲</button>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '22px', fontWeight: 400, color: '#fff', lineHeight: 1 }}>
+        <div style={{ fontSize: '24px', fontWeight: 400, color: '#fff', lineHeight: 1 }}>
           {String(value).padStart(2, '0')}
         </div>
-        <div style={{ fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
+        <div style={{ fontSize: '10px', letterSpacing: '0.2em', color: '#ffffff', marginTop: '4px' }}>
           {label}
         </div>
       </div>
       <button
         style={btn}
         onMouseEnter={e => e.currentTarget.style.color = hoverColor}
-        onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+        onMouseLeave={e => e.currentTarget.style.color = '#ffffff'}
         onClick={onDown}
       >▼</button>
     </div>
@@ -45,13 +45,13 @@ function DatePicker({ value, onChange }) {
       String(nd.getHours()).padStart(2,'0') + ':' +
       String(nd.getMinutes()).padStart(2,'0'))
   }
-  const sep = <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>:</div>
+  const sep = <div style={{ color: '#ffffff', fontSize: '22px', paddingBottom: '28px' }}>:</div>
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', justifyContent: 'center' }}>
       <SpinField label="YEAR"  value={d.getFullYear()} onUp={() => set(n => n.setFullYear(n.getFullYear()+1))}  onDown={() => set(n => n.setFullYear(n.getFullYear()-1))} />
-      <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>/</div>
+      <div style={{ color: '#ffffff', fontSize: '22px', paddingBottom: '28px' }}>/</div>
       <SpinField label="MON"   value={d.getMonth()+1}  onUp={() => set(n => n.setMonth(n.getMonth()+1))}        onDown={() => set(n => n.setMonth(n.getMonth()-1))} />
-      <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: '20px', paddingBottom: '28px' }}>/</div>
+      <div style={{ color: '#ffffff', fontSize: '22px', paddingBottom: '28px' }}>/</div>
       <SpinField label="DAY"   value={d.getDate()}      onUp={() => set(n => n.setDate(n.getDate()+1))}          onDown={() => set(n => n.setDate(n.getDate()-1))} />
       {sep}
       <SpinField label="HOUR"  value={d.getHours()}     onUp={() => set(n => n.setHours(n.getHours()+1))}        onDown={() => set(n => n.setHours(n.getHours()-1))} />
@@ -92,7 +92,7 @@ function Unit({ value, label, red }) {
         style={{
           fontFamily: FONT,
           fontWeight: 400,
-          fontSize: 'clamp(90px, 9.1vw, 154px)',
+          fontSize: 'clamp(99px, 10vw, 169px)',
           lineHeight: 1,
           color: red ? '#dc2020' : '#ffffff',
           letterSpacing: '-0.02em',
@@ -109,7 +109,7 @@ function Unit({ value, label, red }) {
         style={{
           fontFamily: FONT,
           fontWeight: 400,
-          fontSize: '24px',
+          fontSize: '26px',
           letterSpacing: '0.2em',
           color: red ? '#dc2020' : '#ffffff',
         }}
@@ -148,11 +148,10 @@ export default function App() {
     <>
     <BorderProgress />
     <div
-      className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden"
+      className="relative h-screen w-screen flex flex-col items-center justify-center overflow-hidden"
       style={{
         backgroundImage: 'url(/bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundSize: '100% 100%',
         backgroundRepeat: 'no-repeat',
       }}
     >
@@ -161,24 +160,36 @@ export default function App() {
       <div className="relative z-10 flex flex-col items-center w-full" style={{ gap: 'clamp(8px, 1.5vh, 20px)', padding: '0 clamp(16px, 5vw, 80px)' }}>
 
         {/* ONE TEAM + ZERO SHOT 並排 */}
-        <div className="absolute top-8 md:relative md:top-auto flex items-center justify-center" style={{ gap: '3em', flexWrap: 'nowrap' }}>
-          {['ONE TEAM', 'ZERO-SHOT'].map(text => (
-            <p
-              key={text}
-              style={{
-                fontFamily: FONT,
-                fontWeight: 800,
-                fontSize: 'clamp(10px, 2.5vw, 36px)',
-                letterSpacing: '8px',
-                fontStyle: 'normal',
-                textTransform: 'uppercase',
-                color: '#ffffff',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {text}
-            </p>
-          ))}
+        <div className="absolute top-8 left-0 right-0 md:relative md:top-auto md:left-auto md:right-auto flex flex-col items-center justify-center" style={{ gap: '0.5em', flexWrap: 'nowrap' }}>
+          <div className="flex items-center justify-center" style={{ gap: '3em', flexWrap: 'nowrap' }}>
+            {['ONE TEAM', 'ZERO-SHOT'].map(text => (
+              <p
+                key={text}
+                style={{
+                  fontFamily: FONT,
+                  fontWeight: 800,
+                  fontSize: 'clamp(11px, 2.75vw, 40px)',
+                  letterSpacing: '8px',
+                  fontStyle: 'normal',
+                  textTransform: 'uppercase',
+                  color: '#ffffff',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {text}
+              </p>
+            ))}
+          </div>
+          <p style={{
+            fontFamily: FONT,
+            fontWeight: 800,
+            fontSize: '11px',
+            letterSpacing: '0.1em',
+            color: '#ffffff',
+            whiteSpace: 'nowrap',
+          }}>
+            🔥 MADISON HUANG VISIT COUNTDOWN 🔥
+          </p>
         </div>
 
         {/* Countdown numbers */}
@@ -263,9 +274,9 @@ export default function App() {
               style={{
                 fontFamily: FONT,
                 fontWeight: 300,
-                fontSize: '12px',
+                fontSize: '13px',
                 letterSpacing: '0.3em',
-                color: 'rgba(255,255,255,0.6)',
+                color: '#ffffff',
                 textTransform: 'uppercase',
               }}
             >
@@ -280,10 +291,10 @@ export default function App() {
                 style={{
                   fontFamily: FONT,
                   fontWeight: 300,
-                  fontSize: '11px',
+                  fontSize: '12px',
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: '#ffffff',
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
@@ -297,7 +308,7 @@ export default function App() {
                 style={{
                   fontFamily: FONT,
                   fontWeight: 400,
-                  fontSize: '11px',
+                  fontSize: '12px',
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
                   color: '#fff',
