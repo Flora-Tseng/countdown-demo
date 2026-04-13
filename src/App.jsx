@@ -92,7 +92,7 @@ function Unit({ value, label, red }) {
         style={{
           fontFamily: FONT,
           fontWeight: 400,
-          fontSize: 'clamp(50px, 9.1vw, 154px)',
+          fontSize: 'clamp(90px, 9.1vw, 154px)',
           lineHeight: 1,
           color: red ? '#dc2020' : '#ffffff',
           letterSpacing: '-0.02em',
@@ -161,18 +161,19 @@ export default function App() {
       <div className="relative z-10 flex flex-col items-center w-full" style={{ gap: 'clamp(8px, 1.5vh, 20px)', padding: '0 clamp(16px, 5vw, 80px)' }}>
 
         {/* ONE TEAM + ZERO SHOT 並排 */}
-        <div className="flex items-center justify-center" style={{ gap: '3em' }}>
+        <div className="absolute top-8 md:relative md:top-auto flex items-center justify-center" style={{ gap: '3em', flexWrap: 'nowrap' }}>
           {['ONE TEAM', 'ZERO-SHOT'].map(text => (
             <p
               key={text}
               style={{
                 fontFamily: FONT,
                 fontWeight: 800,
-                fontSize: 'clamp(16px, 2.5vw, 36px)',
+                fontSize: 'clamp(10px, 2.5vw, 36px)',
                 letterSpacing: '8px',
                 fontStyle: 'normal',
                 textTransform: 'uppercase',
                 color: '#ffffff',
+                whiteSpace: 'nowrap',
               }}
             >
               {text}
@@ -182,8 +183,8 @@ export default function App() {
 
         {/* Countdown numbers */}
         <div
-          className="flex items-end flex-wrap justify-center"
-          style={{ gap: 'clamp(40px, 8vw, 160px)', width: '100%' }}
+          className="flex flex-col md:flex-row items-center md:items-end justify-center"
+          style={{ gap: 'clamp(16px, 8vw, 160px)', width: '100%' }}
         >
           <Unit value={pad(days)} label="DAY" red />
           <Unit value={pad(hours)} label="HRS" />
