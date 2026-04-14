@@ -52,11 +52,11 @@ function DatePicker({ value, onChange }) {
       <div style={{ color: '#ffffff', fontSize: '22px', paddingBottom: '28px' }}>/</div>
       <SpinField label="MON"   value={d.getMonth()+1}  onUp={() => set(n => n.setMonth(n.getMonth()+1))}        onDown={() => set(n => n.setMonth(n.getMonth()-1))} />
       <div style={{ color: '#ffffff', fontSize: '22px', paddingBottom: '28px' }}>/</div>
-      <SpinField label="DAY"   value={d.getDate()}      onUp={() => set(n => n.setDate(n.getDate()+1))}          onDown={() => set(n => n.setDate(n.getDate()-1))} />
+      <SpinField label="DAYS"   value={d.getDate()}      onUp={() => set(n => n.setDate(n.getDate()+1))}          onDown={() => set(n => n.setDate(n.getDate()-1))} />
       {sep}
       <SpinField label="HOUR"  value={d.getHours()}     onUp={() => set(n => n.setHours(n.getHours()+1))}        onDown={() => set(n => n.setHours(n.getHours()-1))} />
       {sep}
-      <SpinField label="MIN"   value={d.getMinutes()}   onUp={() => set(n => n.setMinutes(n.getMinutes()+1))}    onDown={() => set(n => n.setMinutes(n.getMinutes()-1))} />
+      <SpinField label="MINS"   value={d.getMinutes()}   onUp={() => set(n => n.setMinutes(n.getMinutes()+1))}    onDown={() => set(n => n.setMinutes(n.getMinutes()-1))} />
     </div>
   )
 }
@@ -197,9 +197,9 @@ export default function App() {
           className="flex flex-col md:flex-row items-center md:items-end justify-center"
           style={{ gap: 'clamp(16px, 8vw, 160px)', width: '100%' }}
         >
-          <Unit value={pad(days)} label="DAY" red />
+          <Unit value={pad(days)} label="DAYS" red />
           <Unit value={pad(hours)} label="HRS" />
-          <Unit value={pad(minutes)} label="MIN" />
+          <Unit value={pad(minutes)} label="MINS" />
         </div>
       </div>
 
