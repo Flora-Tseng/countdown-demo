@@ -83,6 +83,41 @@
       box-sizing: border-box;
     }
 
+    .page-header {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-family: 'Red Rose', serif;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(21px, 2.86vw, 39px);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: center;
+      align-self: center;
+    }
+
+    .page-header .subtitle {
+      margin: 6px 0 0;
+      font-size: clamp(13px, 1.3vw, 18px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.85;
+      text-align: center;
+      align-self: center;
+    }
+
     .hoki {
       position: absolute;
       bottom: 80px;
@@ -250,6 +285,7 @@
       .top { padding: 60px; }
       .page { padding: 50px; }
       .hoki { bottom: 50px; width: 100px; }
+      .page-header { top: 50px; }
     }
 
     /* 平板直向以下：改為上下堆疊 */
@@ -257,7 +293,9 @@
       .page {
         flex-direction: column;
         padding: 30px;
+        padding-top: 140px;
       }
+      .page-header { top: 30px; }
       .top {
         flex: 0 0 auto;
         padding: 20px;
@@ -330,8 +368,8 @@
     .top .days {
       margin: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: column-reverse;
+      align-items: flex-start;
       gap: 8px;
       line-height: 1;
     }
@@ -360,7 +398,7 @@
       align-items: center;
       justify-content: center;
       background: transparent;
-      padding: 16px;
+      padding: 0;
       box-sizing: border-box;
       overflow: hidden;
     }
@@ -370,7 +408,7 @@
       height: auto;
       aspect-ratio: 16 / 9;
       max-width: 100%;
-      max-height: 70%;
+      max-height: 100%;
       border: 0;
       display: block;
       background: transparent;
@@ -379,11 +417,12 @@
 </head>
 <body>
   <div class="page">
+    <div class="title-block page-header">
+      <h1>One Team · Zero-Shot</h1>
+      <p class="subtitle">Madison Huang Visit Countdown</p>
+    </div>
+
     <div class="top">
-      <div class="title-block">
-        <h1>One Team · Zero-Shot</h1>
-        <p class="subtitle">Madison Huang Visit Countdown</p>
-      </div>
       <p class="days">
         <span class="num" id="days">--</span>
         <span class="label">Days</span>
