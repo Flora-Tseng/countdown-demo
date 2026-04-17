@@ -25,56 +25,50 @@
       position: relative;
     }
 
-    /* 粒子層 1 — 細小亮點 */
+    /* 中心微光 */
     body::before {
       content: '';
       position: fixed;
-      inset: -20%;
+      inset: 0;
       pointer-events: none;
-      background-image:
-        radial-gradient(1px 1px at 12% 18%, rgba(180, 220, 255, 0.9), transparent 60%),
-        radial-gradient(1px 1px at 27% 64%, rgba(150, 200, 255, 0.7), transparent 60%),
-        radial-gradient(1.5px 1.5px at 41% 32%, rgba(200, 230, 255, 0.85), transparent 60%),
-        radial-gradient(1px 1px at 58% 78%, rgba(140, 190, 255, 0.7), transparent 60%),
-        radial-gradient(1px 1px at 73% 12%, rgba(190, 220, 255, 0.9), transparent 60%),
-        radial-gradient(1.5px 1.5px at 86% 47%, rgba(160, 210, 255, 0.8), transparent 60%),
-        radial-gradient(1px 1px at 8% 86%, rgba(170, 215, 255, 0.7), transparent 60%),
-        radial-gradient(1px 1px at 92% 92%, rgba(200, 230, 255, 0.85), transparent 60%),
-        radial-gradient(1.5px 1.5px at 50% 5%, rgba(150, 200, 255, 0.75), transparent 60%),
-        radial-gradient(1px 1px at 35% 95%, rgba(180, 220, 255, 0.8), transparent 60%);
-      background-repeat: repeat;
-      background-size: 60vmin 60vmin;
-      animation: drift1 40s linear infinite;
+      background: radial-gradient(circle at 50% 50%, rgba(120, 180, 255, 0.18), transparent 55%);
       z-index: 1;
+      animation: corePulse 6s ease-in-out infinite;
     }
 
-    /* 粒子層 2 — 較大、較亮、慢速反向飄動 */
-    body::after {
-      content: '';
+    @keyframes corePulse {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
+    }
+
+    /* 粒子容器 */
+    .particles {
       position: fixed;
-      inset: -20%;
+      inset: 0;
       pointer-events: none;
-      background-image:
-        radial-gradient(2px 2px at 20% 30%, rgba(220, 240, 255, 0.9), transparent 65%),
-        radial-gradient(2.5px 2.5px at 65% 55%, rgba(180, 220, 255, 0.85), transparent 65%),
-        radial-gradient(2px 2px at 88% 22%, rgba(200, 230, 255, 0.8), transparent 65%),
-        radial-gradient(2px 2px at 15% 78%, rgba(170, 210, 255, 0.85), transparent 65%),
-        radial-gradient(2.5px 2.5px at 48% 88%, rgba(220, 240, 255, 0.9), transparent 65%);
-      background-repeat: repeat;
-      background-size: 90vmin 90vmin;
-      animation: drift2 70s linear infinite;
       z-index: 1;
-      opacity: 0.7;
+      overflow: hidden;
     }
 
-    @keyframes drift1 {
-      0%   { transform: translate(0, 0); }
-      100% { transform: translate(-60vmin, -30vmin); }
+    .particles span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220,240,255,1) 0%, rgba(150,200,255,0.6) 40%, transparent 70%);
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      animation: emanate 7s linear infinite;
+      box-shadow: 0 0 6px rgba(200, 230, 255, 0.6);
     }
 
-    @keyframes drift2 {
-      0%   { transform: translate(0, 0); }
-      100% { transform: translate(45vmin, 30vmin); }
+    @keyframes emanate {
+      0%   { transform: translate(-50%, -50%) translate(0, 0) scale(0.2); opacity: 0; }
+      10%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
     }
 
     .page { position: relative; z-index: 2; }
@@ -312,12 +306,14 @@
       background: transparent;
       padding: 16px;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
     .bottom iframe {
       width: 100%;
       height: auto;
       aspect-ratio: 16 / 9;
+      max-width: 100%;
       max-height: 100%;
       border: 0;
       display: block;
@@ -339,6 +335,8 @@
       <button class="edit-btn" id="editBtn" aria-label="Edit countdown target"></button>
     </div>
 
+    <div class="particles" id="particles"></div>
+
     <img class="hoki" src="HOKI.gif" alt="HOKI" />
 
     <div class="bottom">
@@ -346,6 +344,7 @@
         src="https://superlative-strudel-6bd09c.netlify.app/"
         loading="lazy"
         allow="fullscreen"
+        scrolling="no"
       ></iframe>
     </div>
   </div>
@@ -360,6 +359,31 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // ── 粒子：從中心散發 ──
+    (function spawnParticles() {
+      const container = document.getElementById('particles');
+      const COUNT = 80;
+      for (let i = 0; i < COUNT; i++) {
+        const s = document.createElement('span');
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 300 + Math.random() * 700; // px
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        const duration = 5 + Math.random() * 6;
+        const delay = -Math.random() * duration;
+        const size = 2 + Math.random() * 5;
+        s.style.setProperty('--dx', dx + 'px');
+        s.style.setProperty('--dy', dy + 'px');
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.style.animationDuration = duration + 's';
+        s.style.animationDelay = delay + 's';
+        container.appendChild(s);
+      }
+    })();
+  </script>
 
   <script>
     const STORAGE_KEY = 'countdown-target-local';
