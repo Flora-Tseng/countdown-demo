@@ -1,15 +1,369 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Countdown</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Red+Rose:wght@300;400;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Red+Rose:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    }
+
+    .page {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top {
+      position: relative;
+      flex: 1 1 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px;
+      box-sizing: border-box;
+      font-family: 'Red Rose', serif;
+    }
+
+    .edit-btn {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .edit-btn:hover {
+      transform: scale(1.5);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 32px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .spin-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .spin-sep {
+      color: #fff;
+      font-size: 22px;
+      padding-bottom: 28px;
+    }
+
+    .spin-field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .spin-field button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 4px 8px;
+      font-family: inherit;
+      transition: opacity 0.15s;
+      opacity: 0.7;
+    }
+
+    .spin-field button:hover {
+      opacity: 1;
+    }
+
+    .spin-value {
+      font-size: 24px;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      min-width: 2.2ch;
+    }
+
+    .spin-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: #fff;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .modal-actions button {
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      padding: 8px 18px;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: #fff;
+    }
+
+    .btn-save {
+      background: #AE0101;
+      color: #fff;
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: clamp(21px, 2.86vw, 39px);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .top .subtitle {
+      margin: 6px 0 0;
+      font-size: clamp(13px, 1.3vw, 18px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.85;
+    }
+
+    .top .title-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .top .days {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      line-height: 1;
+    }
+
+    .top .days .num {
+      font-size: clamp(83px, 15.6vw, 208px);
+      font-weight: 700;
+      color: #AE0101;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .top .days .label {
+      font-size: clamp(18px, 2.08vw, 29px);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .bottom {
+      flex: 1 1 50%;
+      position: relative;
+      background: rgba(0, 0, 0, 0.4);   /* 半透明底色 */
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .bottom iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <div class="title-block">
+        <h1>One Team · Zero-Shot</h1>
+        <p class="subtitle">Madison Huang Visit Countdown</p>
+      </div>
+      <p class="days">
+        <span class="num" id="days">--</span>
+        <span class="label">Days</span>
+      </p>
+      <button class="edit-btn" id="editBtn" aria-label="Edit countdown target"></button>
+    </div>
+
+    <div class="bottom">
+      <iframe
+        src="https://superlative-strudel-6bd09c.netlify.app/"
+        loading="lazy"
+        allow="fullscreen"
+      ></iframe>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h2>Set Countdown Target</h2>
+      <div class="spin-row" id="spinRow"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-save" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'countdown-target-local';
+    const DEFAULT_TARGET = '2026-05-25T00:00';
+
+    function getTarget() {
+      return localStorage.getItem(STORAGE_KEY) || DEFAULT_TARGET;
+    }
+
+    function update() {
+      const target = new Date(getTarget());
+      const diff = target - new Date();
+      const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+      document.getElementById('days').textContent = String(days).padStart(2, '0');
+    }
+
+    update();
+    setInterval(update, 60 * 1000);
+
+    const backdrop = document.getElementById('modalBackdrop');
+    const spinRow = document.getElementById('spinRow');
+
+    // 暫存編輯中的日期
+    let editing = new Date(getTarget());
+
+    function fmt(d) {
+      return d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0') + 'T' +
+        String(d.getHours()).padStart(2, '0') + ':' +
+        String(d.getMinutes()).padStart(2, '0');
+    }
+
+    const FIELDS = [
+      { label: 'YEAR', get: d => d.getFullYear(),    inc: d => d.setFullYear(d.getFullYear() + 1), dec: d => d.setFullYear(d.getFullYear() - 1) },
+      { label: 'MON',  get: d => d.getMonth() + 1,   inc: d => d.setMonth(d.getMonth() + 1),       dec: d => d.setMonth(d.getMonth() - 1)   },
+      { label: 'DAYS', get: d => d.getDate(),        inc: d => d.setDate(d.getDate() + 1),         dec: d => d.setDate(d.getDate() - 1)     },
+      { label: 'HOUR', get: d => d.getHours(),       inc: d => d.setHours(d.getHours() + 1),       dec: d => d.setHours(d.getHours() - 1)   },
+      { label: 'MINS', get: d => d.getMinutes(),     inc: d => d.setMinutes(d.getMinutes() + 1),   dec: d => d.setMinutes(d.getMinutes() - 1) },
+    ];
+
+    function renderSpinner() {
+      spinRow.innerHTML = '';
+      FIELDS.forEach((f, i) => {
+        if (i > 0) {
+          const sep = document.createElement('div');
+          sep.className = 'spin-sep';
+          sep.textContent = (i === 3) ? ':' : (i === 4 ? ':' : '/');
+          spinRow.appendChild(sep);
+        }
+        const wrap = document.createElement('div');
+        wrap.className = 'spin-field';
+
+        const up = document.createElement('button');
+        up.textContent = '▲';
+        up.addEventListener('click', () => { f.inc(editing); renderSpinner(); });
+
+        const valWrap = document.createElement('div');
+        const val = document.createElement('div');
+        val.className = 'spin-value';
+        val.textContent = String(f.get(editing)).padStart(2, '0');
+        const lbl = document.createElement('div');
+        lbl.className = 'spin-label';
+        lbl.textContent = f.label;
+        valWrap.appendChild(val);
+        valWrap.appendChild(lbl);
+
+        const down = document.createElement('button');
+        down.textContent = '▼';
+        down.addEventListener('click', () => { f.dec(editing); renderSpinner(); });
+
+        wrap.appendChild(up);
+        wrap.appendChild(valWrap);
+        wrap.appendChild(down);
+        spinRow.appendChild(wrap);
+      });
+    }
+
+    document.getElementById('editBtn').addEventListener('click', () => {
+      editing = new Date(getTarget());
+      renderSpinner();
+      backdrop.classList.add('open');
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      backdrop.classList.remove('open');
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      localStorage.setItem(STORAGE_KEY, fmt(editing));
+      update();
+      backdrop.classList.remove('open');
+    });
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) backdrop.classList.remove('open');
+    });
+  </script>
+</body>
 </html>
