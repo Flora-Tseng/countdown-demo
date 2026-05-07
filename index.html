@@ -14,7 +14,7 @@
       height: 100%;
       overflow: hidden;
       color: #fff;
-      font-family: system-ui, -apple-system, "Helvetica Neue", sans-serif;
+      font-family: 'Red Rose', system-ui, -apple-system, sans-serif;
     }
 
     body {
@@ -25,7 +25,6 @@
       position: relative;
     }
 
-    /* 中心微光 */
     body::before {
       content: '';
       position: fixed;
@@ -41,7 +40,6 @@
       50%      { opacity: 1; }
     }
 
-    /* 粒子容器 */
     .particles {
       position: fixed;
       inset: 0;
@@ -71,80 +69,119 @@
       100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
     }
 
-    .page { position: relative; z-index: 2; }
-
     .page {
       position: relative;
+      z-index: 2;
       height: 100vh;
       width: 100vw;
-      display: flex;
-      flex-direction: row;
-      padding: 80px;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
-    .page-header {
+    /* 左上 標題 */
+    .title-block {
       position: absolute;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      font-family: 'Red Rose', serif;
+      top: 60px;
+      left: 80px;
       z-index: 10;
       pointer-events: none;
     }
 
-    .page-header h1 {
+    .title-block h1 {
       margin: 0;
-      font-size: clamp(27px, 3.72vw, 51px);
-      letter-spacing: 0.15em;
+      font-size: clamp(24px, 3vw, 44px);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 700;
-      text-align: center;
-      align-self: center;
+      line-height: 1;
     }
 
-    .page-header .subtitle {
-      margin: 6px 0 0;
-      font-size: clamp(17px, 1.69vw, 23px);
+    .title-block .subtitle {
+      margin: 10px 0 0;
+      font-size: clamp(12px, 1.05vw, 16px);
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #fff;
       opacity: 0.85;
-      text-align: center;
-      align-self: center;
+    }
+
+    /* 右上 D-XX */
+    .days-corner {
+      position: absolute;
+      top: 60px;
+      right: 80px;
+      z-index: 10;
+      font-weight: 700;
+      font-size: clamp(56px, 7.5vw, 120px);
+      color: #AE0101;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 中間兩個嵌入 */
+    .embeds {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 220px 80px 140px;
+      box-sizing: border-box;
+    }
+
+    .embed-card {
+      flex: 1 1 0;
+      height: 100%;
+      max-height: 600px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .embed-card iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: transparent;
+    }
+
+    .embed-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.6s ease;
+      opacity: 0;
+    }
+
+    .embed-card img.loaded {
+      opacity: 1;
+    }
+
+    .embed-empty {
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
     }
 
     .hoki {
       position: absolute;
-      bottom: 50px;
+      bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
+      width: 100px;
       height: auto;
       pointer-events: none;
       z-index: 10;
     }
-
-    .top {
-      position: relative;
-      flex: 0 0 40%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 24px;
-      padding: 100px;
-      box-sizing: border-box;
-      font-family: 'Red Rose', serif;
-      text-align: left;
-    }
-
-    .top .title-block { align-items: flex-start; }
-    .top .days { align-items: flex-start; }
 
     .edit-btn {
       position: absolute;
@@ -158,6 +195,7 @@
       cursor: pointer;
       padding: 0;
       transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 20;
     }
 
     .edit-btn:hover {
@@ -165,6 +203,7 @@
       background: rgba(255, 255, 255, 0.5);
     }
 
+    /* Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -174,276 +213,104 @@
       justify-content: center;
       z-index: 100;
     }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
+    .modal-backdrop.open { display: flex; }
     .modal {
       background: #111;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255,255,255,0.1);
       padding: 32px;
       min-width: 320px;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-
     .modal h2 {
       margin: 0;
       font-size: 13px;
       font-weight: 300;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: #fff;
     }
-
-    .spin-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .spin-sep {
-      color: #fff;
-      font-size: 22px;
-      padding-bottom: 28px;
-    }
-
-    .spin-field {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
+    .spin-row { display: flex; align-items: flex-end; gap: 8px; justify-content: center; }
+    .spin-sep { color: #fff; font-size: 22px; padding-bottom: 28px; }
+    .spin-field { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .spin-field button {
-      background: none;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-size: 13px;
-      line-height: 1;
-      padding: 4px 8px;
-      font-family: inherit;
-      transition: opacity 0.15s;
-      opacity: 0.7;
+      background: none; border: none; color: #fff; cursor: pointer;
+      font-size: 13px; line-height: 1; padding: 4px 8px;
+      font-family: inherit; transition: opacity 0.15s; opacity: 0.7;
     }
-
-    .spin-field button:hover {
-      opacity: 1;
-    }
-
+    .spin-field button:hover { opacity: 1; }
     .spin-value {
-      font-size: 24px;
-      font-weight: 400;
-      color: #fff;
-      line-height: 1;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-      min-width: 2.2ch;
+      font-size: 24px; font-weight: 400; color: #fff;
+      line-height: 1; text-align: center;
+      font-variant-numeric: tabular-nums; min-width: 2.2ch;
     }
-
     .spin-label {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      color: #fff;
-      margin-top: 4px;
-      text-align: center;
+      font-size: 10px; letter-spacing: 0.2em; color: #fff;
+      margin-top: 4px; text-align: center;
     }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-    }
-
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
     .modal-actions button {
-      font-family: inherit;
-      font-size: 12px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      border: none;
-      cursor: pointer;
-      padding: 8px 18px;
+      font-family: inherit; font-size: 12px; letter-spacing: 0.2em;
+      text-transform: uppercase; border: none; cursor: pointer; padding: 8px 18px;
     }
+    .btn-cancel { background: transparent; color: #fff; }
+    .btn-save   { background: #AE0101;     color: #fff; }
 
-    .btn-cancel {
-      background: transparent;
-      color: #fff;
-    }
-
-    .btn-save {
-      background: #AE0101;
-      color: #fff;
-    }
-
-    /* ── RWD ── */
-    /* 中型螢幕（平板橫向）：縮減左側 padding */
+    /* RWD */
     @media (max-width: 1200px) {
-      .top { padding: 60px; }
-      .page { padding: 50px; }
-      .hoki { bottom: 50px; width: 100px; }
-      .page-header { top: 50px; }
+      .title-block { top: 40px; left: 50px; }
+      .days-corner { top: 40px; right: 50px; }
+      .embeds { padding: 180px 50px 120px; gap: 20px; }
     }
 
-    /* 平板直向以下：改為上下堆疊 */
     @media (max-width: 900px) {
-      .page {
+      .title-block { top: 30px; left: 30px; }
+      .days-corner { top: 30px; right: 30px; }
+      .embeds {
         flex-direction: column;
-        padding: 30px;
-        padding-top: 140px;
+        padding: 160px 24px 110px;
+        gap: 16px;
       }
-      .page-header { top: 30px; }
-      .top {
-        flex: 0 0 auto;
-        padding: 20px;
-        align-items: center;
-        text-align: center;
-      }
-      .top .title-block,
-      .top .days,
-      .top h1,
-      .top .subtitle,
-      .top .days .label {
-        align-self: center;
-        text-align: center;
-      }
-      .bottom {
-        flex: 1 1 auto;
-        width: 100%;
-        padding: 0;
-      }
-      .bottom iframe {
-        max-height: 100%;
-      }
-      .hoki {
-        width: 80px;
-        bottom: 30px;
-      }
+      .embed-card { max-height: none; }
     }
 
-    /* 手機 */
     @media (max-width: 480px) {
-      .page { padding: 16px; }
-      .top { padding: 12px; gap: 16px; }
-      .top h1 { font-size: 18px; }
-      .top .subtitle { font-size: 11px; }
-      .top .days .num { font-size: 108px; }
-      .top .days .label { font-size: 21px; }
-      .hoki { width: 60px; bottom: 20px; }
-      .modal { min-width: auto; padding: 24px; margin: 16px; }
-      .spin-row { gap: 4px; }
-      .spin-value { font-size: 20px; }
-    }
-
-    .top h1 {
-      margin: 0;
-      font-size: clamp(21px, 2.86vw, 39px);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: left;
-      align-self: flex-start;
-    }
-
-    .top .subtitle {
-      margin: 6px 0 0;
-      font-size: clamp(13px, 1.3vw, 18px);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #fff;
-      opacity: 0.85;
-      text-align: left;
-      align-self: flex-start;
-    }
-
-    .top .title-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .top .days {
-      margin: 0;
-      display: flex;
-      flex-direction: column-reverse;
-      align-items: flex-start;
-      gap: 8px;
-      line-height: 1;
-    }
-
-    .top .days .num {
-      font-size: clamp(125px, 23.4vw, 312px);
-      font-weight: 700;
-      color: #AE0101;
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .top .days .label {
-      font-size: clamp(27px, 3.12vw, 44px);
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #fff;
-      text-align: left;
-      align-self: flex-start;
-    }
-
-    .bottom {
-      flex: 0 0 60%;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      padding: 0;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .bottom iframe {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      max-width: 100%;
-      max-height: 100%;
-      border: 0;
-      display: block;
-      background: transparent;
-      margin: auto;
-      transform: translateY(50px);
+      .title-block h1 { font-size: 18px; }
+      .title-block .subtitle { font-size: 10px; }
+      .days-corner { font-size: 56px; }
+      .hoki { width: 70px; bottom: 20px; }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="title-block page-header">
+    <div class="title-block">
       <h1>One Team · Zero-Shot</h1>
-      <p class="subtitle">Madison Huang Visit Countdown</p>
+      <p class="subtitle">Countdown to Madison Huang's Visit</p>
     </div>
 
-    <div class="top">
-      <p class="days">
-        <span class="num" id="days">--</span>
-        <span class="label">Days</span>
-      </p>
-      <button class="edit-btn" id="editBtn" aria-label="Edit countdown target"></button>
+    <div class="days-corner">D-<span id="days">--</span></div>
+
+    <div class="embeds">
+      <div class="embed-card">
+        <iframe
+          src="https://notion-achievement-wall.vercel.app/?v=507"
+          loading="lazy"
+          allow="fullscreen"
+          scrolling="no"
+        ></iframe>
+      </div>
+      <div class="embed-card" id="photoCard">
+        <span class="embed-empty" id="photoEmpty">Loading photos…</span>
+        <img id="randomPhoto" alt="" />
+      </div>
     </div>
 
     <div class="particles" id="particles"></div>
 
     <img class="hoki" src="HOKI.gif" alt="HOKI" />
 
-    <div class="bottom">
-      <iframe
-        src="https://notion-achievement-wall.vercel.app/?v=507"
-        loading="lazy"
-        allow="fullscreen"
-        scrolling="no"
-      ></iframe>
-    </div>
+    <button class="edit-btn" id="editBtn" aria-label="Edit countdown target"></button>
   </div>
 
   <div class="modal-backdrop" id="modalBackdrop">
@@ -452,20 +319,121 @@
       <div class="spin-row" id="spinRow"></div>
       <div class="modal-actions">
         <button class="btn-cancel" id="cancelBtn">Cancel</button>
-        <button class="btn-save" id="saveBtn">Save</button>
+        <button class="btn-save"   id="saveBtn">Save</button>
       </div>
     </div>
   </div>
 
-  <script>
-    // ── 粒子：從中心散發 ──
+  <script type="module">
+    /* =========================================================
+       Google Drive 設定 — 從 .env.local（本地）或 Vercel 環境變數讀取
+       ========================================================= */
+    const GDRIVE_API_KEY   = import.meta.env.VITE_GDRIVE_API_KEY;
+    const GDRIVE_FOLDER_ID = import.meta.env.VITE_GDRIVE_FOLDER_ID;
+    const PHOTO_REFRESH_MS = 15 * 1000; // 每 15 秒換一張
+    /* ========================================================= */
+
+    let driveFiles = [];
+    const photoEl  = document.getElementById('randomPhoto');
+    const emptyEl  = document.getElementById('photoEmpty');
+
+    // 列出單一資料夾內的「圖片 + 子資料夾」（含分頁）
+    async function listFolderChildren(folderId) {
+      const q = `'${folderId}' in parents and trashed=false and `
+              + `(mimeType contains 'image/' or mimeType='application/vnd.google-apps.folder')`;
+      let pageToken = null;
+      const items = [];
+      do {
+        const params = new URLSearchParams({
+          q,
+          fields: 'nextPageToken, files(id,name,mimeType)',
+          pageSize: '1000',
+          supportsAllDrives: 'true',
+          includeItemsFromAllDrives: 'true',
+          key: GDRIVE_API_KEY,
+        });
+        if (pageToken) params.set('pageToken', pageToken);
+        const res  = await fetch('https://www.googleapis.com/drive/v3/files?' + params);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        items.push(...(data.files || []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+      return items;
+    }
+
+    // 遞迴掃整個資料夾樹（廣度優先）
+    async function fetchDriveFiles() {
+      if (!GDRIVE_API_KEY || GDRIVE_API_KEY === 'YOUR_API_KEY_HERE') {
+        emptyEl.textContent = 'Drive API key not set';
+        return;
+      }
+      const FOLDER_MIME = 'application/vnd.google-apps.folder';
+      const queue = [GDRIVE_FOLDER_ID];
+      const seen  = new Set();
+      try {
+        let depth = 0;
+        while (queue.length) {
+          // 同層的資料夾平行抓，加快速度
+          const batch = queue.splice(0, queue.length);
+          console.log(`[Drive] depth ${depth} → scanning ${batch.length} folder(s)`);
+          const results = await Promise.all(batch.map(listFolderChildren));
+          for (let i = 0; i < results.length; i++) {
+            const items = results[i];
+            console.log(`[Drive]   folder ${batch[i]} → ${items.length} children`,
+              items.map(x => `${x.mimeType.startsWith('image/') ? '🖼' : '📁'} ${x.name}`));
+            for (const f of items) {
+              if (seen.has(f.id)) continue;
+              seen.add(f.id);
+              if (f.mimeType === FOLDER_MIME) {
+                queue.push(f.id);
+              } else {
+                driveFiles.push(f);
+              }
+            }
+          }
+          depth++;
+        }
+      } catch (err) {
+        console.error('Drive API error:', err);
+        emptyEl.textContent = 'Drive error: ' + err.message;
+        return;
+      }
+      if (!driveFiles.length) emptyEl.textContent = 'No photos found';
+      else console.log(`Loaded ${driveFiles.length} photos from Drive`);
+    }
+
+    function pickRandomPhoto() {
+      if (!driveFiles.length) return;
+      const f = driveFiles[Math.floor(Math.random() * driveFiles.length)];
+      const url = `https://drive.google.com/thumbnail?id=${f.id}&sz=w2400`;
+      photoEl.classList.remove('loaded');
+      photoEl.onload = () => {
+        photoEl.classList.add('loaded');
+        emptyEl.style.display = 'none';
+      };
+      photoEl.src = url;
+    }
+
+    (async () => {
+      try {
+        await fetchDriveFiles();
+        pickRandomPhoto();
+        setInterval(pickRandomPhoto, PHOTO_REFRESH_MS);
+      } catch (err) {
+        console.error('Drive fetch failed:', err);
+        emptyEl.textContent = 'Drive fetch failed';
+      }
+    })();
+
+    /* ── Particles ── */
     (function spawnParticles() {
       const container = document.getElementById('particles');
       const COUNT = 80;
       for (let i = 0; i < COUNT; i++) {
         const s = document.createElement('span');
         const angle = Math.random() * Math.PI * 2;
-        const distance = 300 + Math.random() * 700; // px
+        const distance = 300 + Math.random() * 700;
         const dx = Math.cos(angle) * distance;
         const dy = Math.sin(angle) * distance;
         const duration = 5 + Math.random() * 6;
@@ -480,30 +448,23 @@
         container.appendChild(s);
       }
     })();
-  </script>
 
-  <script>
-    const STORAGE_KEY = 'countdown-target-local';
+    /* ── Countdown ── */
+    const STORAGE_KEY    = 'countdown-target-local';
     const DEFAULT_TARGET = '2026-05-25T00:00';
-
-    function getTarget() {
-      return localStorage.getItem(STORAGE_KEY) || DEFAULT_TARGET;
-    }
-
+    function getTarget() { return localStorage.getItem(STORAGE_KEY) || DEFAULT_TARGET; }
     function update() {
       const target = new Date(getTarget());
       const diff = target - new Date();
       const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
       document.getElementById('days').textContent = String(days).padStart(2, '0');
     }
-
     update();
     setInterval(update, 60 * 1000);
 
+    /* ── Edit modal ── */
     const backdrop = document.getElementById('modalBackdrop');
-    const spinRow = document.getElementById('spinRow');
-
-    // 暫存編輯中的日期
+    const spinRow  = document.getElementById('spinRow');
     let editing = new Date(getTarget());
 
     function fmt(d) {
@@ -528,7 +489,7 @@
         if (i > 0) {
           const sep = document.createElement('div');
           sep.className = 'spin-sep';
-          sep.textContent = (i === 3) ? ':' : (i === 4 ? ':' : '/');
+          sep.textContent = (i === 3 || i === 4) ? ':' : '/';
           spinRow.appendChild(sep);
         }
         const wrap = document.createElement('div');
@@ -564,20 +525,13 @@
       renderSpinner();
       backdrop.classList.add('open');
     });
-
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-      backdrop.classList.remove('open');
-    });
-
+    document.getElementById('cancelBtn').addEventListener('click', () => backdrop.classList.remove('open'));
     document.getElementById('saveBtn').addEventListener('click', () => {
       localStorage.setItem(STORAGE_KEY, fmt(editing));
       update();
       backdrop.classList.remove('open');
     });
-
-    backdrop.addEventListener('click', (e) => {
-      if (e.target === backdrop) backdrop.classList.remove('open');
-    });
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) backdrop.classList.remove('open'); });
   </script>
 </body>
 </html>
