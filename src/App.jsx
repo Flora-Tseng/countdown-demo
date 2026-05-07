@@ -157,7 +157,7 @@ export default function App() {
     >
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center w-full" style={{ gap: 'clamp(8px, 1.5vh, 20px)', padding: '0 clamp(16px, 5vw, 80px)' }}>
+      <div className="relative z-10 flex flex-col items-center w-full" style={{ gap: 'clamp(8px, 1.5vh, 20px)', padding: '0 clamp(16px, 5vw, 80px)', marginTop: 'clamp(40px, 10vh, 120px)' }}>
 
         {/* ONE TEAM + ZERO SHOT 並排 */}
         <div className="absolute top-8 left-0 right-0 md:relative md:top-auto md:left-auto md:right-auto flex flex-col items-center justify-center" style={{ gap: '0.5em', flexWrap: 'nowrap' }}>
