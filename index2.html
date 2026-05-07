@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Countdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Red+Rose:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      color: #fff;
+      font-family: 'Red Rose', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(40, 60, 100, 0.25), transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(20, 40, 80, 0.3), transparent 60%),
+        #000;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(120, 180, 255, 0.18), transparent 55%);
+      z-index: 1;
+      animation: corePulse 6s ease-in-out infinite;
+    }
+
+    @keyframes corePulse {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .particles span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220,240,255,1) 0%, rgba(150,200,255,0.6) 40%, transparent 70%);
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      animation: emanate 7s linear infinite;
+      box-shadow: 0 0 6px rgba(200, 230, 255, 0.6);
+    }
+
+    @keyframes emanate {
+      0%   { transform: translate(-50%, -50%) translate(0, 0) scale(0.2); opacity: 0; }
+      10%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* 左上 標題 */
+    .title-block {
+      position: absolute;
+      top: 60px;
+      left: 80px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 44px);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .title-block .subtitle {
+      margin: 10px 0 0;
+      font-size: clamp(12px, 1.05vw, 16px);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    /* 右上 D-XX */
+    .days-corner {
+      position: absolute;
+      top: 60px;
+      right: 80px;
+      z-index: 10;
+      font-weight: 700;
+      font-size: clamp(56px, 7.5vw, 120px);
+      color: #AE0101;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 中間兩個嵌入 */
+    .embeds {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 220px 80px 140px;
+      box-sizing: border-box;
+    }
+
+    .embed-card {
+      flex: 1 1 0;
+      height: 100%;
+      max-height: 600px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .embed-card iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: transparent;
+    }
+
+    .embed-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.6s ease;
+      opacity: 0;
+    }
+
+    .embed-card img.loaded {
+      opacity: 1;
+    }
+
+    .embed-empty {
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .hoki {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: auto;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .edit-btn {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s ease, background 0.2s ease;
+      z-index: 20;
+    }
+
+    .edit-btn:hover {
+      transform: scale(1.5);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 32px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .modal h2 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .spin-row { display: flex; align-items: flex-end; gap: 8px; justify-content: center; }
+    .spin-sep { color: #fff; font-size: 22px; padding-bottom: 28px; }
+    .spin-field { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .spin-field button {
+      background: none; border: none; color: #fff; cursor: pointer;
+      font-size: 13px; line-height: 1; padding: 4px 8px;
+      font-family: inherit; transition: opacity 0.15s; opacity: 0.7;
+    }
+    .spin-field button:hover { opacity: 1; }
+    .spin-value {
+      font-size: 24px; font-weight: 400; color: #fff;
+      line-height: 1; text-align: center;
+      font-variant-numeric: tabular-nums; min-width: 2.2ch;
+    }
+    .spin-label {
+      font-size: 10px; letter-spacing: 0.2em; color: #fff;
+      margin-top: 4px; text-align: center;
+    }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+    .modal-actions button {
+      font-family: inherit; font-size: 12px; letter-spacing: 0.2em;
+      text-transform: uppercase; border: none; cursor: pointer; padding: 8px 18px;
+    }
+    .btn-cancel { background: transparent; color: #fff; }
+    .btn-save   { background: #AE0101;     color: #fff; }
+
+    /* RWD */
+    @media (max-width: 1200px) {
+      .title-block { top: 40px; left: 50px; }
+      .days-corner { top: 40px; right: 50px; }
+      .embeds { padding: 180px 50px 120px; gap: 20px; }
+    }
+
+    @media (max-width: 900px) {
+      .title-block { top: 30px; left: 30px; }
+      .days-corner { top: 30px; right: 30px; }
+      .embeds {
+        flex-direction: column;
+        padding: 160px 24px 110px;
+        gap: 16px;
+      }
+      .embed-card { max-height: none; }
+    }
+
+    @media (max-width: 480px) {
+      .title-block h1 { font-size: 18px; }
+      .title-block .subtitle { font-size: 10px; }
+      .days-corner { font-size: 56px; }
+      .hoki { width: 70px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="title-block">
+      <h1>One Team · Zero-Shot</h1>
+      <p class="subtitle">Countdown to Madison Huang's Visit</p>
+    </div>
+
+    <div class="days-corner">D-<span id="days">--</span></div>
+
+    <div class="embeds">
+      <div class="embed-card">
+        <iframe
+          src="https://notion-achievement-wall.vercel.app/?v=507"
+          loading="lazy"
+          allow="fullscreen"
+          scrolling="no"
+        ></iframe>
+      </div>
+      <div class="embed-card" id="photoCard">
+        <span class="embed-empty" id="photoEmpty">Loading photos…</span>
+        <img id="randomPhoto" alt="" />
+      </div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <img class="hoki" src="HOKI.gif" alt="HOKI" />
+
+    <button class="edit-btn" id="editBtn" aria-label="Edit countdown target"></button>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h2>Set Countdown Target</h2>
+      <div class="spin-row" id="spinRow"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-save"   id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    /* =========================================================
+       Google Drive 設定 — 從 .env.local（本地）或 Vercel 環境變數讀取
+       ========================================================= */
+    const GDRIVE_API_KEY   = import.meta.env.VITE_GDRIVE_API_KEY;
+    const GDRIVE_FOLDER_ID = import.meta.env.VITE_GDRIVE_FOLDER_ID;
+    const PHOTO_REFRESH_MS = 15 * 1000; // 每 15 秒換一張
+    /* ========================================================= */
+
+    let driveFiles = [];
+    const photoEl  = document.getElementById('randomPhoto');
+    const emptyEl  = document.getElementById('photoEmpty');
+
+    // 列出單一資料夾內的「圖片 + 子資料夾」（含分頁）
+    async function listFolderChildren(folderId) {
+      const q = `'${folderId}' in parents and trashed=false and `
+              + `(mimeType contains 'image/' or mimeType='application/vnd.google-apps.folder')`;
+      let pageToken = null;
+      const items = [];
+      do {
+        const params = new URLSearchParams({
+          q,
+          fields: 'nextPageToken, files(id,name,mimeType)',
+          pageSize: '1000',
+          supportsAllDrives: 'true',
+          includeItemsFromAllDrives: 'true',
+          key: GDRIVE_API_KEY,
+        });
+        if (pageToken) params.set('pageToken', pageToken);
+        const res  = await fetch('https://www.googleapis.com/drive/v3/files?' + params);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+        items.push(...(data.files || []));
+        pageToken = data.nextPageToken;
+      } while (pageToken);
+      return items;
+    }
+
+    // 遞迴掃整個資料夾樹（廣度優先）
+    async function fetchDriveFiles() {
+      if (!GDRIVE_API_KEY || GDRIVE_API_KEY === 'YOUR_API_KEY_HERE') {
+        emptyEl.textContent = 'Drive API key not set';
+        return;
+      }
+      const FOLDER_MIME = 'application/vnd.google-apps.folder';
+      const queue = [GDRIVE_FOLDER_ID];
+      const seen  = new Set();
+      try {
+        let depth = 0;
+        while (queue.length) {
+          // 同層的資料夾平行抓，加快速度
+          const batch = queue.splice(0, queue.length);
+          console.log(`[Drive] depth ${depth} → scanning ${batch.length} folder(s)`);
+          const results = await Promise.all(batch.map(listFolderChildren));
+          for (let i = 0; i < results.length; i++) {
+            const items = results[i];
+            console.log(`[Drive]   folder ${batch[i]} → ${items.length} children`,
+              items.map(x => `${x.mimeType.startsWith('image/') ? '🖼' : '📁'} ${x.name}`));
+            for (const f of items) {
+              if (seen.has(f.id)) continue;
+              seen.add(f.id);
+              if (f.mimeType === FOLDER_MIME) {
+                queue.push(f.id);
+              } else {
+                driveFiles.push(f);
+              }
+            }
+          }
+          depth++;
+        }
+      } catch (err) {
+        console.error('Drive API error:', err);
+        emptyEl.textContent = 'Drive error: ' + err.message;
+        return;
+      }
+      if (!driveFiles.length) emptyEl.textContent = 'No photos found';
+      else console.log(`Loaded ${driveFiles.length} photos from Drive`);
+    }
+
+    function pickRandomPhoto() {
+      if (!driveFiles.length) return;
+      const f = driveFiles[Math.floor(Math.random() * driveFiles.length)];
+      const url = `https://drive.google.com/thumbnail?id=${f.id}&sz=w2400`;
+      photoEl.classList.remove('loaded');
+      photoEl.onload = () => {
+        photoEl.classList.add('loaded');
+        emptyEl.style.display = 'none';
+      };
+      photoEl.src = url;
+    }
+
+    (async () => {
+      try {
+        await fetchDriveFiles();
+        pickRandomPhoto();
+        setInterval(pickRandomPhoto, PHOTO_REFRESH_MS);
+      } catch (err) {
+        console.error('Drive fetch failed:', err);
+        emptyEl.textContent = 'Drive fetch failed';
+      }
+    })();
+
+    /* ── Particles ── */
+    (function spawnParticles() {
+      const container = document.getElementById('particles');
+      const COUNT = 80;
+      for (let i = 0; i < COUNT; i++) {
+        const s = document.createElement('span');
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 300 + Math.random() * 700;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        const duration = 5 + Math.random() * 6;
+        const delay = -Math.random() * duration;
+        const size = 2 + Math.random() * 5;
+        s.style.setProperty('--dx', dx + 'px');
+        s.style.setProperty('--dy', dy + 'px');
+        s.style.width = size + 'px';
+        s.style.height = size + 'px';
+        s.style.animationDuration = duration + 's';
+        s.style.animationDelay = delay + 's';
+        container.appendChild(s);
+      }
+    })();
+
+    /* ── Countdown ── */
+    const STORAGE_KEY    = 'countdown-target-local';
+    const DEFAULT_TARGET = '2026-05-25T00:00';
+    function getTarget() { return localStorage.getItem(STORAGE_KEY) || DEFAULT_TARGET; }
+    function update() {
+      const target = new Date(getTarget());
+      const diff = target - new Date();
+      const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+      document.getElementById('days').textContent = String(days).padStart(2, '0');
+    }
+    update();
+    setInterval(update, 60 * 1000);
+
+    /* ── Edit modal ── */
+    const backdrop = document.getElementById('modalBackdrop');
+    const spinRow  = document.getElementById('spinRow');
+    let editing = new Date(getTarget());
+
+    function fmt(d) {
+      return d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0') + 'T' +
+        String(d.getHours()).padStart(2, '0') + ':' +
+        String(d.getMinutes()).padStart(2, '0');
+    }
+
+    const FIELDS = [
+      { label: 'YEAR', get: d => d.getFullYear(),    inc: d => d.setFullYear(d.getFullYear() + 1), dec: d => d.setFullYear(d.getFullYear() - 1) },
+      { label: 'MON',  get: d => d.getMonth() + 1,   inc: d => d.setMonth(d.getMonth() + 1),       dec: d => d.setMonth(d.getMonth() - 1)   },
+      { label: 'DAYS', get: d => d.getDate(),        inc: d => d.setDate(d.getDate() + 1),         dec: d => d.setDate(d.getDate() - 1)     },
+      { label: 'HOUR', get: d => d.getHours(),       inc: d => d.setHours(d.getHours() + 1),       dec: d => d.setHours(d.getHours() - 1)   },
+      { label: 'MINS', get: d => d.getMinutes(),     inc: d => d.setMinutes(d.getMinutes() + 1),   dec: d => d.setMinutes(d.getMinutes() - 1) },
+    ];
+
+    function renderSpinner() {
+      spinRow.innerHTML = '';
+      FIELDS.forEach((f, i) => {
+        if (i > 0) {
+          const sep = document.createElement('div');
+          sep.className = 'spin-sep';
+          sep.textContent = (i === 3 || i === 4) ? ':' : '/';
+          spinRow.appendChild(sep);
+        }
+        const wrap = document.createElement('div');
+        wrap.className = 'spin-field';
+
+        const up = document.createElement('button');
+        up.textContent = '▲';
+        up.addEventListener('click', () => { f.inc(editing); renderSpinner(); });
+
+        const valWrap = document.createElement('div');
+        const val = document.createElement('div');
+        val.className = 'spin-value';
+        val.textContent = String(f.get(editing)).padStart(2, '0');
+        const lbl = document.createElement('div');
+        lbl.className = 'spin-label';
+        lbl.textContent = f.label;
+        valWrap.appendChild(val);
+        valWrap.appendChild(lbl);
+
+        const down = document.createElement('button');
+        down.textContent = '▼';
+        down.addEventListener('click', () => { f.dec(editing); renderSpinner(); });
+
+        wrap.appendChild(up);
+        wrap.appendChild(valWrap);
+        wrap.appendChild(down);
+        spinRow.appendChild(wrap);
+      });
+    }
+
+    document.getElementById('editBtn').addEventListener('click', () => {
+      editing = new Date(getTarget());
+      renderSpinner();
+      backdrop.classList.add('open');
+    });
+    document.getElementById('cancelBtn').addEventListener('click', () => backdrop.classList.remove('open'));
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      localStorage.setItem(STORAGE_KEY, fmt(editing));
+      update();
+      backdrop.classList.remove('open');
+    });
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) backdrop.classList.remove('open'); });
+  </script>
+</body>
+</html>
